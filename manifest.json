@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+  "name": "Wordle Sync",
+  "description": "Sync Wordle stats with a local server.",
+  "version": "0.1.0",
+  "icons": {
+    "64": "icons/icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.powerlanguage.co.uk/wordle/"
+      ],
+      "js": [
+        "sync.js"
+      ]
+    }
+  ]
+}
