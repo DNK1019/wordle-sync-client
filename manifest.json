@@ -2,7 +2,7 @@
   "manifest_version": 2,
   "name": "Wordle Sync",
   "description": "Sync Wordle stats with a 3rd party server.",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "icons": {
     "64": "icons/icon.png"
   },
@@ -13,9 +13,6 @@
       ],
       "js": [
         "sync.js"
-      ],
-      "css": [
-        "sync-settings.css"
       ]
     }
   ]
