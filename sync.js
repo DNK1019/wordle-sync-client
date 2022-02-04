@@ -30,6 +30,7 @@ var syncButtons = userDiv.cloneNode(true)
 var user = document.createElement("input");
 user.type = "password"
 user.style.verticalAlign = "middle";
+user.value = localStorage.getItem("user");
 settingButtons.appendChild(user);
 
 // Create upload button
@@ -67,6 +68,7 @@ gameShadowRoot.getElementById("settings-button").addEventListener("click", funct
 
 upButton.addEventListener("click", function() {
     if (!user.value) return;
+    localStorage.setItem("user", user.value);
     var url = "https://" + server + ":3078/upsync";
 
     var cleanedUser = user.value.replace(/\W/g, '');
@@ -87,6 +89,7 @@ upButton.addEventListener("click", function() {
 
 downButton.addEventListener("click", function() {
     if (!user.value) return;
+    localStorage.setItem("user", user.value);
     var cleanedUser = user.value.replace(/\W/g, ''); // Remove all non-alphanumeric characters (stolen from stackoverflow [how did copilot know i was going to type this?])
     var params = JSON.stringify({
         "user": cleanedUser
