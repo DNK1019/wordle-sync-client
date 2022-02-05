@@ -106,6 +106,8 @@ downButton.addEventListener("click", function() {
         console.log(response);
         if (response.stats) localStorage.setItem("statistics", JSON.stringify(response.stats));
         if (response.game) localStorage.setItem("gameState", JSON.stringify(response.game));
+
+        window.location.reload();
     };
 
     xhr.open("POST", url, true);
