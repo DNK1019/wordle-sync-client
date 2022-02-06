@@ -4,6 +4,7 @@ var server = "www.drewkrause.dev";
 var userDiv = document.createElement("div");
 userDiv.classList.add("setting");
 
+var autoUpload = localStorage.getItem("autoUpload");
 
 // =============================
 // I DO NOT UNDERSTAND THIS CODE
@@ -24,7 +25,10 @@ settingButtons.className = "control";
 userDiv.appendChild(settingButtons);
 
 // Create new catagory for sync buttons
-var syncButtons = userDiv.cloneNode(true)
+var syncButtonsDiv = userDiv.cloneNode(true)
+
+// Create new catagory for sync buttons
+var autoUploadDiv = userDiv.cloneNode(true)
 
 // Create textbox for user
 var user = document.createElement("input");
@@ -49,10 +53,18 @@ var downButton = upButton.cloneNode();
 downButton.innerHTML = "<svg width=\"32px\" height=\"32px\" viewBox=\"0 0 24 24\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"><path d=\"M11 4a4 4 0 0 0-3.999 4.102 1 1 0 0 1-.75.992A3.002 3.002 0 0 0 7 15h1a1 1 0 1 1 0 2H7a5 5 0 0 1-1.97-9.596 6 6 0 0 1 11.169-2.4A6 6 0 0 1 16 17a1 1 0 1 1 0-2 4 4 0 1 0-.328-7.987 1 1 0 0 1-.999-.6A4.001 4.001 0 0 0 11 4zm1 6a1 1 0 0 1 1 1v7.586l.293-.293a1 1 0 0 1 1.414 1.414l-2 2a1 1 0 0 1-1.414 0l-2-2a1 1 0 1 1 1.414-1.414l.293.293V11a1 1 0 0 1 1-1z\" fill=\"var(--color-tone-3)\"/></svg>";
 
 // Add upload and download buttons to 2nd div
-syncButtons.children[1].appendChild(upButton);
-syncButtons.children[1].appendChild(downButton);
+syncButtonsDiv.children[1].appendChild(upButton);
+syncButtonsDiv.children[1].appendChild(downButton);
 // Set title and description of second div
-syncButtons.children[0].innerHTML = "<div class=\"title\">Sync</div><div class=\"description\">Sync your devices with the server.</div>";
+syncButtonsDiv.children[0].innerHTML = "<div class=\"title\">Sync</div><div class=\"description\">Sync your devices with the server.</div>";
+
+var autoUploadSwitch = document.createElement("game-switch");
+autoUploadSwitch.setAttribute("id", "auto-upload");
+autoUploadSwitch.setAttribute("name", "auto-upload");
+if (autoUpload) autoUploadSwitch.setAttribute("checked", "");
+
+autoUploadDiv.children[0].innerHTML = "<div class=\"title\">Auto Upload</div><div class=\"description\">Automatically upload on game completion.</div>";
+autoUploadDiv.children[1].appendChild(autoUploadSwitch);
 
 var game = gameShadowRoot.getElementById("game");
 
@@ -63,11 +75,18 @@ var game = gameShadowRoot.getElementById("game");
 gameShadowRoot.getElementById("settings-button").addEventListener("click", function() {
     // Structure: game-settings > shadowRoot > div.sections > 1st div.section 
     var settings = game.getElementsByTagName("game-settings")[0].shadowRoot.children[1].children[0];
+    if (autoUploadSwitch.shadowRoot.childElementCount) {
+        autoUploadSwitch.shadowRoot.children[1].remove();
+        autoUploadSwitch.shadowRoot.children[0].remove(); 
+    }
+    
     settings.appendChild(userDiv);
-    settings.appendChild(syncButtons);
+    settings.appendChild(syncButtonsDiv);
+    settings.appendChild(autoUploadDiv);
+    
 });
 
-upButton.addEventListener("click", function() {
+function upsync(silent) {
     if (!user.value) return;
     localStorage.setItem("user", user.value);
     var url = "https://" + server + ":3078/upsync";
@@ -84,13 +103,18 @@ upButton.addEventListener("click", function() {
     xhr.open("POST", url, true);
     xhr.setRequestHeader("Content-type", "application/json");
 
-    xhr.onload = () => {
-        wordleToast(xhr.status == 200 ? "Successfully uploaded data." : "Failed to upload data.", 0, true);
+    if(!silent) {
+        xhr.onload = () => {
+            wordleToast(xhr.status == 200 ? "Successfully uploaded data." : "Failed to upload data.", 0, true);
+        }
     }
 
     xhr.send(params);
     console.log(JSON.parse(params));
-});
+    console.log(document.getElementsByTagName("game-app")[0].gameStatus)
+}
+
+upButton.addEventListener("click", function () { upsync(); });
 
 downButton.addEventListener("click", function() {
     if (!user.value) return;
@@ -126,3 +150,20 @@ function wordleToast(text, duration, system) {
     if (duration) toast.setAttribute("duration", duration);
     gameShadowRoot.querySelector(system ? "#system-toaster" : "#game-toaster").prepend(toast);
 }
+
+game.addEventListener('game-last-tile-revealed-in-row', function () {
+    console.log(JSON.parse(localStorage.getItem('gameState')).gameStatus);
+    if (JSON.parse(localStorage.getItem('gameState')).gameStatus != "IN_PROGRESS" && autoUpload) upsync();
+});
+
+gameShadowRoot.addEventListener("game-setting-change", function(a) {
+    var s = a.detail,
+    t = s.name,
+    value = s.checked;
+    console.log(t);
+    switch(t) {
+        case "auto-upload":
+            localStorage.setItem("autoUpload", value);
+            autoUpload = value;
+    }
+});
