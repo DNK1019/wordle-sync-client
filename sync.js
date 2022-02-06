@@ -75,6 +75,8 @@ var game = gameShadowRoot.getElementById("game");
 gameShadowRoot.getElementById("settings-button").addEventListener("click", function() {
     // Structure: game-settings > shadowRoot > div.sections > 1st div.section 
     var settings = game.getElementsByTagName("game-settings")[0].shadowRoot.children[1].children[0];
+
+    // Remove duplicate switches
     if (autoUploadSwitch.shadowRoot.childElementCount) {
         autoUploadSwitch.shadowRoot.children[1].remove();
         autoUploadSwitch.shadowRoot.children[0].remove(); 
@@ -111,7 +113,6 @@ function upsync(silent) {
 
     xhr.send(params);
     console.log(JSON.parse(params));
-    console.log(document.getElementsByTagName("game-app")[0].gameStatus)
 }
 
 upButton.addEventListener("click", function () { upsync(); });
