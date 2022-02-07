@@ -158,7 +158,6 @@ function wordleToast(text, duration, system) {
 }
 
 game.addEventListener('game-last-tile-revealed-in-row', function () {
-    console.log(JSON.parse(localStorage.getItem('gameState')).gameStatus);
     if (JSON.parse(localStorage.getItem('gameState')).gameStatus != "IN_PROGRESS" && autoUpload) upsync(true);
 });
 
