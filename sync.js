@@ -34,11 +34,12 @@ var autoUploadDiv = userDiv.cloneNode(true)
 var user = document.createElement("input");
 user.type = "password"
 user.style.verticalAlign = "middle";
-user.style.borderRadius = "10px";
+user.style.borderRadius = "999px";
+user.style.padding = "1px 5px";
 user.style.border = "solid var(--color-tone-3)";
 user.style.outline = "none";
-user.onfocus = () => user.style.border = "solid var(--color-correct)";
-user.onblur = () => user.style.border = "solid var(--color-tone-3)";
+user.onfocus = () => user.style.borderColor = "var(--color-correct)";
+user.onblur = () => user.style.borderColor = "var(--color-tone-3)";
 user.value = localStorage.getItem("user");
 settingButtons.appendChild(user);
 
