@@ -1,6 +1,11 @@
 var gameShadowRoot = document.getElementsByTagName("game-app")[0].shadowRoot;
 var server = "www.drewkrause.dev";
 
+// I hate NYT, give back old Wordle!
+const nyt = document.location.hostname == "www.nytimes.com";
+const statsStorage = nyt ? "nyt-wordle-statistics" : "statistics";
+const gameStorage = nyt ? "nyt-wordle-state" : "gameState";
+
 var userDiv = document.createElement("div");
 userDiv.classList.add("setting");
 
@@ -103,8 +108,8 @@ function upsync(silent) {
     var params = JSON.stringify({
         "user": cleanedUser,
         "data": {
-            "stats": JSON.parse(localStorage.getItem("statistics")),
-            "game": JSON.parse(localStorage.getItem("gameState"))
+            "stats": JSON.parse(localStorage.getItem(statsStorage)),
+            "game": JSON.parse(localStorage.getItem(gameStorage))
         }
     });
     var xhr = new XMLHttpRequest();
@@ -138,8 +143,8 @@ downButton.addEventListener("click", function() {
         if (xhr.status != 200) return (wordleToast("Failed to download data.", 0, true));
         var response = JSON.parse(xhr.responseText);
         console.log(response);
-        if (response.stats) localStorage.setItem("statistics", JSON.stringify(response.stats));
-        if (response.game) localStorage.setItem("gameState", JSON.stringify(response.game));
+        if (response.stats) localStorage.setItem(statsStorage, JSON.stringify(response.stats));
+        if (response.game) localStorage.setItem(gameStorage, JSON.stringify(response.game));
         wordleToast("Successfully downloaded data. Refreshing.", 0, true);
         window.location.reload();
     };
@@ -158,8 +163,9 @@ function wordleToast(text, duration, system) {
     gameShadowRoot.querySelector(system ? "#system-toaster" : "#game-toaster").prepend(toast);
 }
 
+
 game.addEventListener('game-last-tile-revealed-in-row', function () {
-    if (JSON.parse(localStorage.getItem('gameState')).gameStatus != "IN_PROGRESS" && autoUpload) upsync(true);
+    if (JSON.parse(localStorage.getItem(statsStorage)).gameStatus != "IN_PROGRESS" && autoUpload) upsync(true);
 });
 
 gameShadowRoot.addEventListener("game-setting-change", function(a) {
