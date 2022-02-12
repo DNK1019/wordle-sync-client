@@ -100,11 +100,11 @@ gameShadowRoot.getElementById("settings-button").addEventListener("click", funct
 });
 
 function upsync(silent) {
-    if (!user.value) return;
+    var cleanedUser = user.value.replace(/\W/g, '');
+    if (!cleaneedUser) return;
     localStorage.setItem("user", user.value);
     var url = "https://" + server + ":3078/upsync";
 
-    var cleanedUser = user.value.replace(/\W/g, '');
     var params = JSON.stringify({
         "user": cleanedUser,
         "data": {
@@ -129,9 +129,9 @@ function upsync(silent) {
 upButton.addEventListener("click", function () { upsync(); });
 
 downButton.addEventListener("click", function() {
-    if (!user.value) return;
-    localStorage.setItem("user", user.value);
     var cleanedUser = user.value.replace(/\W/g, ''); // Remove all non-alphanumeric characters (stolen from stackoverflow [how did copilot know i was going to type this?])
+    if (!cleanedUser) return;
+    localStorage.setItem("user", cleanedUser);
     var params = JSON.stringify({
         "user": cleanedUser
     });
