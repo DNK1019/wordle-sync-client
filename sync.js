@@ -72,7 +72,7 @@ syncButtonsDiv.children[0].innerHTML = "<div class=\"title\">Sync</div><div clas
 var autoUploadSwitch = document.createElement("game-switch");
 autoUploadSwitch.setAttribute("id", "auto-upload");
 autoUploadSwitch.setAttribute("name", "auto-upload");
-if (autoUpload) autoUploadSwitch.setAttribute("checked", "");
+if (JSON.parse(autoUpload)) autoUploadSwitch.setAttribute("checked", "");
 
 autoUploadDiv.children[0].innerHTML = "<div class=\"title\">Auto Upload</div><div class=\"description\">Automatically upload on game completion.</div>";
 autoUploadDiv.children[1].appendChild(autoUploadSwitch);
@@ -101,7 +101,7 @@ gameShadowRoot.getElementById("settings-button").addEventListener("click", funct
 
 function upsync(silent) {
     var cleanedUser = user.value.replace(/\W/g, '');
-    if (!cleaneedUser) return;
+    if (!cleanedUser) return;
     localStorage.setItem("user", user.value);
     var url = "https://" + server + ":3078/upsync";
 
