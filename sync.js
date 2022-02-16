@@ -172,7 +172,6 @@ gameShadowRoot.addEventListener("game-setting-change", function(a) {
     var s = a.detail,
     t = s.name,
     value = s.checked;
-    console.log(t);
     switch(t) {
         case "auto-upload":
             localStorage.setItem("autoUpload", value);
