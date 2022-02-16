@@ -9,7 +9,7 @@ const gameStorage = nyt ? "nyt-wordle-state" : "gameState";
 var userDiv = document.createElement("div");
 userDiv.classList.add("setting");
 
-var autoUpload = localStorage.getItem("autoUpload");
+var autoUpload = JSON.parse(localStorage.getItem("autoUpload"));
 
 // =============================
 // I DO NOT UNDERSTAND THIS CODE
@@ -72,7 +72,7 @@ syncButtonsDiv.children[0].innerHTML = "<div class=\"title\">Sync</div><div clas
 var autoUploadSwitch = document.createElement("game-switch");
 autoUploadSwitch.setAttribute("id", "auto-upload");
 autoUploadSwitch.setAttribute("name", "auto-upload");
-if (JSON.parse(autoUpload)) autoUploadSwitch.setAttribute("checked", "");
+if (autoUpload) autoUploadSwitch.setAttribute("checked", "");
 
 autoUploadDiv.children[0].innerHTML = "<div class=\"title\">Auto Upload</div><div class=\"description\">Automatically upload on game completion.</div>";
 autoUploadDiv.children[1].appendChild(autoUploadSwitch);
